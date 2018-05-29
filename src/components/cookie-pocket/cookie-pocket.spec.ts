@@ -1,19 +1,20 @@
 import { TestWindow } from '@stencil/core/testing';
-import { MyComponent } from './my-component';
+import { CookiePocket } from './cookie-pocket';
 
 describe('my-component', () => {
   it('should build', () => {
-    expect(new MyComponent()).toBeTruthy();
+    expect(new CookiePocket()).toBeTruthy();
   });
 
   describe('rendering', () => {
     let element: HTMLMyComponentElement;
     let testWindow: TestWindow;
+
     beforeEach(async () => {
       testWindow = new TestWindow();
       element = await testWindow.load({
-        components: [MyComponent],
-        html: '<my-component></my-component>'
+        components: [CookiePocket],
+        html: '<cookie-pocket></cookie-pocket>'
       });
     });
 
@@ -34,7 +35,7 @@ describe('my-component', () => {
     });
 
     it('should work with both a first and a last name', async () => {
-      element.first = 'Peter'
+      element.first = 'Peter';
       element.last = 'Parker';
       await testWindow.flush();
       expect(element.textContent.trim()).toEqual('Hello, World! I\'m Peter Parker');

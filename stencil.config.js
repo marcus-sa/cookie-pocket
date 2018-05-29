@@ -1,10 +1,10 @@
 exports.config = {
-  namespace: 'mycomponent',
+  namespace: 'cookie-pocket',
   outputTargets:[
-    { 
-      type: 'dist' 
+    {
+      type: 'dist'
     },
-    { 
+    {
       type: 'www',
       serviceWorker: false
     }
@@ -14,4 +14,4 @@ exports.config = {
 exports.devServer = {
   root: 'www',
   watchGlob: '**/**'
-}
+};
