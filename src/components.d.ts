@@ -34,6 +34,7 @@ declare global {
       'categories': string[];
       'hide': () => void;
       'i18n': I18n;
+      'logo': string;
       'show': () => void;
     }
   }
@@ -59,6 +60,7 @@ declare global {
     export interface CookiePocketAttributes extends HTMLAttributes {
       'categories'?: string[];
       'i18n'?: I18n;
+      'logo'?: string;
       'onCompliance'?: (event: CustomEvent) => void;
       'onReady'?: (event: CustomEvent) => void;
     }

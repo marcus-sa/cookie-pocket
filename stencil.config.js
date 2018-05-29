@@ -1,17 +1,20 @@
+const sass = require('@stencil/sass');
+
 exports.config = {
   namespace: 'cookie-pocket',
   outputTargets:[
     {
-      type: 'dist'
+      type: 'dist',
     },
     {
       type: 'www',
-      serviceWorker: false
+      serviceWorker: false,
     }
-  ]
+  ],
+  plugins: [sass()],
 };
 
 exports.devServer = {
   root: 'www',
-  watchGlob: '**/**'
+  watchGlob: '**/**',
 };
