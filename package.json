@@ -1,5 +1,5 @@
 {
-  "name": "my-component",
+  "name": "cookie-pocket",
   "version": "0.0.1",
   "description": "Stencil Component Starter",
   "module": "dist/esm/index.js",
@@ -28,14 +28,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ionic-team/stencil-component-starter.git"
+    "url": "git+https://github.com/marcus-sa/cookie-pocket.git"
   },
   "author": "Ionic Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ionic-team/stencil"
+    "url": "https://github.com/marcus-sa/cookie-pocket"
   },
-  "homepage": "https://github.com/ionic-team/stencil",
+  "homepage": "https://github.com/marcus-sa/cookie-pocket",
   "jest": {
     "transform": {
       "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"
