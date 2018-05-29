@@ -9,10 +9,22 @@
 </head>
 <body>
 
-  <cookie-pocket first="Stencil" last="'Don't call me a framework' JS"></cookie-pocket>
+  <cookie-pocket></cookie-pocket>
 
 </body>
 <script type="text/javascript">
+  // Why doesn't Stencil add some sort of
+  // ready event or some other kind of crap
+  // so we don't have to create our own retarded listener?
+  const cookiePocket = document.querySelector('cookie-pocket');
 
+  cookiePocket.onCompliance = (val) => console.log(val);
+
+  cookiePocket.onReady = (instance) => {
+    cookiePocket.i18n = {
+      cookieDeclaration: 'Cookiedeklaration',
+      acceptLabel: 'OK'
+    };
+  };
 </script>
 </html>

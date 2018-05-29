@@ -23,37 +23,44 @@ declare global {
   interface HTMLAttributes {}
 }
 
+import {
+  I18n,
+} from './components/cookie-pocket/i18n.interface';
 
 declare global {
 
   namespace StencilComponents {
-    interface MyComponent {
-      'first': string;
-      'last': string;
+    interface CookiePocket {
+      'categories': string[];
+      'hide': () => void;
+      'i18n': I18n;
+      'show': () => void;
     }
   }
 
-  interface HTMLMyComponentElement extends StencilComponents.MyComponent, HTMLStencilElement {}
+  interface HTMLCookiePocketElement extends StencilComponents.CookiePocket, HTMLStencilElement {}
 
-  var HTMLMyComponentElement: {
-    prototype: HTMLMyComponentElement;
-    new (): HTMLMyComponentElement;
+  var HTMLCookiePocketElement: {
+    prototype: HTMLCookiePocketElement;
+    new (): HTMLCookiePocketElement;
   };
   interface HTMLElementTagNameMap {
-    'my-component': HTMLMyComponentElement;
+    'cookie-pocket': HTMLCookiePocketElement;
   }
   interface ElementTagNameMap {
-    'my-component': HTMLMyComponentElement;
+    'cookie-pocket': HTMLCookiePocketElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      'my-component': JSXElements.MyComponentAttributes;
+      'cookie-pocket': JSXElements.CookiePocketAttributes;
     }
   }
   namespace JSXElements {
-    export interface MyComponentAttributes extends HTMLAttributes {
-      'first'?: string;
-      'last'?: string;
+    export interface CookiePocketAttributes extends HTMLAttributes {
+      'categories'?: string[];
+      'i18n'?: I18n;
+      'onCompliance'?: (event: CustomEvent) => void;
+      'onReady'?: (event: CustomEvent) => void;
     }
   }
 }

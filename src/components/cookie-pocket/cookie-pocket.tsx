@@ -1,29 +1,56 @@
-import { Component, Prop, State, Element, Event, EventEmitter } from '@stencil/core';
-
-import { I18n } from './i18n.interface';
+import { Method, Component, Prop, Element, State, EventEmitter, Event } from '@stencil/core';
 import { defaultTranslations } from './translations';
+import { I18n } from './i18n.interface';
+import { CurrentTab, CookiePocketElement } from './types';
 
 @Component({
   tag: 'cookie-pocket',
   styleUrl: 'cookie-pocket.css',
-  shadow: true
+  //shadow: true
 })
 export class CookiePocket {
 
-  @Element() cookiePocketEl: HTMLElement;
+  @Prop({ mutable: true }) i18n: I18n = defaultTranslations;
 
-  @Event() confirmed: EventEmitter;
+  @Element() cookiePocketEl: CookiePocketElement;
 
+  @State() value: string = 'some shit';
+  @State() active: boolean = false;
   @State() showDetails: boolean = false;
-  @State() tab: "declaration" | "about" = 'declaration';
+  @State() currentTab: CurrentTab = 'declaration';
+  @Prop() categories: string[];
 
-  @Prop() translations: I18n = defaultTranslations;
-  @Prop() options;
+  @Event() ready: EventEmitter;
+  @Event() compliance: EventEmitter;
+
+  componentDidLoad() {
+    this.cookiePocketEl.onReady && this.cookiePocketEl.onReady(this);
+
+    this.ready.emit();
+  }
+
+  onCompliance = (e) => {
+    this.cookiePocketEl.onCompliance && this.cookiePocketEl.onCompliance(this.value);
+
+    this.compliance.emit(this.value);
+    e.preventDefault();
+  };
+
+  @Method()
+  hide() {
+    this.active = false;
+  }
+
+  @Method()
+  show() {
+    this.active = true;
+  }
 
   render() {
     return (
       <div>
-        Hello, World! I'm {this.first} {this.last}
+        <h1>{this.i18n.cookieDeclaration}</h1>
+        <button onClick={this.onCompliance}>{this.i18n.acceptLabel}</button>
       </div>
     );
   }
