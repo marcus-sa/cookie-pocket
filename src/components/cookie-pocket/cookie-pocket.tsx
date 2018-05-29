@@ -1,7 +1,8 @@
-import { Method, Component, Prop, Element, State, EventEmitter, Event } from '@stencil/core';
+import { Method, Component, Prop, Element, State, EventEmitter, Event, Watch } from '@stencil/core';
+
+import { CurrentTab, CookiePocketElement } from './types';
 import { defaultTranslations } from './translations';
 import { I18n } from './i18n.interface';
-import { CurrentTab, CookiePocketElement } from './types';
 
 @Component({
   tag: 'cookie-pocket',
@@ -23,6 +24,16 @@ export class CookiePocket {
 
   @Event() ready: EventEmitter;
   @Event() compliance: EventEmitter;
+
+  @Watch('i18n')
+  watchI18nProp(i18n: I18n | string) {
+    if (typeof i18n === 'string') {
+      i18n = JSON.parse(i18n) as I18n;
+    }
+
+    this.i18n = { ...this.i18n, ...i18n };
+  }
+
 
   componentDidLoad() {
     this.cookiePocketEl.onReady && this.cookiePocketEl.onReady(this);
