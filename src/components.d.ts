@@ -31,9 +31,9 @@ declare global {
 
   namespace StencilComponents {
     interface CookiePocket {
-      'categories': string[];
       'force': boolean;
       'i18n': I18n;
+      'key': string;
       'logo': string;
     }
   }
@@ -57,9 +57,9 @@ declare global {
   }
   namespace JSXElements {
     export interface CookiePocketAttributes extends HTMLAttributes {
-      'categories'?: string[];
       'force'?: boolean;
       'i18n'?: I18n;
+      'key'?: string;
       'logo'?: string;
       'onCompliance'?: (event: CustomEvent) => void;
       'onReady'?: (event: CustomEvent) => void;

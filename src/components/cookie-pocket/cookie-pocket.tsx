@@ -2,7 +2,7 @@ import { Component, Prop, Element, State, EventEmitter, Event, Method } from '@s
 import Cookies from 'js-cookie';
 import classNames from 'classnames';
 
-import { CurrentTab, CookiePocketElement } from './types';
+import { CurrentTab, CookiePocketElement, CookieLevels, CookiePocketCookies } from './types';
 import { defaultTranslations } from './translations';
 import { I18n } from './i18n.interface';
 
@@ -14,17 +14,18 @@ import { I18n } from './i18n.interface';
 export class CookiePocket {
 
   @Prop() logo: string = 'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fd4z6dx8qrln4r.cloudfront.net%2Fimage-5694689a934b5-default.png&f=1';
+  @Prop() key: string;
   @Prop() force: boolean = false;
-  @Prop() categories: string[];
+  //@Prop() categories: string[];
   @Prop({ mutable: true }) i18n: I18n = defaultTranslations;
 
   @Element() cookiePocketEl: CookiePocketElement;
 
-  @State() cookieDetailPane: string = 'necessary';
-  @State() active: boolean = true;//false;
+  @State() activeCookieDetailPane: string = 'necessary';
+  @State() active: boolean = true;
   @State() showDetails: boolean = false;
   @State() currentTab: CurrentTab = 'overview';
-  @State() levels = {
+  @State() levels: CookieLevels = {
     preferences: true,
     statistics: true,
     marketing: true,
@@ -33,29 +34,65 @@ export class CookiePocket {
   @Event() ready: EventEmitter;
   @Event() compliance: EventEmitter;
 
+  private readonly canUseCookies: boolean = !(
+    navigator.doNotTrack === 'yes' ||
+    !navigator.cookieEnabled
+  );
+
+  private readonly complianceOptions = {
+    expires: 182.5,
+    path: window.location.hostname,
+  };
+
   @Method()
   hide = () => this.active = false;
 
   @Method()
   show = () => this.active = true;
 
-  componentWillLoad() {
-    const compliance = Cookies.get('cookie-pocket-compliance');
+  private getStoredCookies() {
+    return Cookies.getJSON(CookiePocket.name) || {} as CookiePocketCookies;
+  }
 
-    if (compliance/* === 'accepted'*/ && !this.force) this.hide();
+  private getStorage(): CookiePocketCookies {
+    if (this.canUseCookies) {
+      return this.getStoredCookies();
+    }
+
+    /*const compliance = localStorage.getItem('cookie-pocket-compliance');
+    return { compliance, levels: {} };*/
+  }
+
+  async componentWillLoad() {
+    const cookies = this.getStorage();
+
+    if (cookies.consent && !this.force) {
+      this.emitCompliance(cookies.levels);
+      return this.hide();
+    }
+
+    //const external = await fetch(`https://cookie-pocket.herokuapp.com/${this.key}`);
+  }
+
+  private emitCompliance(levels: CookieLevels) {
+    this.cookiePocketEl.onCompliance && this.cookiePocketEl.onCompliance(levels);
+    this.compliance.emit(levels);
   }
 
   componentDidLoad() {
-    this.cookiePocketEl.onReady && this.cookiePocketEl.onReady(this);
+    this.cookiePocketEl.onReady && this.cookiePocketEl.onReady();
 
     this.ready.emit();
   }
 
-  onCompliance = (e) => {
-    this.cookiePocketEl.onCompliance && this.cookiePocketEl.onCompliance(this.levels);
-    this.compliance.emit(this.levels);
+  private onCompliance = (e) => {
+    this.emitCompliance(this.levels);
 
-    Cookies.set('cookie-pocket-compliance', 'accepted');
+    Cookies.set(CookiePocket.name, {
+      consent: true,
+      levels: this.levels
+    }, this.complianceOptions); // expires in 6 months
+
     e.preventDefault();
     this.hide();
   };
@@ -69,7 +106,7 @@ export class CookiePocket {
   };
 
   private changeCurrentTab = (tab: CurrentTab) => {
-    return (e: MouseEvent) => {
+    return (e) => {
       this.currentTab = tab;
 
       e.preventDefault();
@@ -78,7 +115,7 @@ export class CookiePocket {
 
   private chooseCookieDetailPane = (type: string) => {
     return (e) => {
-      this.cookieDetailPane = type;
+      this.activeCookieDetailPane = type;
 
       e.preventDefault();
     };
@@ -92,17 +129,19 @@ export class CookiePocket {
     };
   };
 
+  private createDisplayStyle = (bool) => ({ display: bool ? 'block': 'none' });
+
   render() {
     const isCurrentTabOverview = this.currentTab === 'overview';
 
     const detailsButtonClass = classNames('details-button', { expanded: this.showDetails });
-    const detailsBodyStyle = { display: this.showDetails ? 'block' : 'none' };
+    const detailsBodyStyle = this.createDisplayStyle(this.showDetails);
 
     const detailsOverviewButtonClass = classNames('tab-item', { selected: isCurrentTabOverview });
-    const detailsOverviewStyle = { display: isCurrentTabOverview ? 'block' : 'none' };
+    const detailsOverviewStyle = this.createDisplayStyle(isCurrentTabOverview);
 
     const detailsAboutButtonClass = classNames('tab-item', { selected: !isCurrentTabOverview });
-    const detailsAboutStyle = { display: !isCurrentTabOverview ? 'block' : 'none' };
+    const detailsAboutStyle = this.createDisplayStyle(!isCurrentTabOverview);
 
     const detailsButtonText = !this.showDetails
       ? this.i18n.details.show
@@ -127,8 +166,8 @@ export class CookiePocket {
           </p>
         </div>
         <div class="buttons">
-          <a class="button decline">Kun nødvendige cookies</a>
-          <a class="button accept">Tillad alle cookies</a>
+          {/*<a class="button decline">Kun nødvendige cookies</a>
+          <a class="button accept">Tillad alle cookies</a>*/}
           <a class="button details">{this.i18n.details.show}</a>
         </div>
         <div class="level-wrapper">
@@ -145,8 +184,8 @@ export class CookiePocket {
                   </div>
                   {panes.map(pane => (
                     <div class="button-wrapper">
-                      <input checked={this.levels[pane]} onChange={this.selectLevel(pane)} type="checkbox" id={`--cookiepocket-${pane}`} class="button"/>
-                      <label htmlFor={`--cookiepocket-${pane}`}>{this.i18n.categories[pane]}</label>
+                      <input checked={this.levels[pane]} onChange={this.selectLevel(pane)} type="checkbox" id={pane} class="button"/>
+                      <label htmlFor={pane}>{this.i18n.categories[pane]}</label>
                     </div>
                   ))}
                 </div>
@@ -170,7 +209,7 @@ export class CookiePocket {
                 <div class="types">
                   {typeCategories.map(type => {
                     const typeItemClass = classNames('type-item', {
-                      selected: this.cookieDetailPane === type
+                      selected: this.activeCookieDetailPane === type
                     });
 
                     return (
@@ -184,7 +223,7 @@ export class CookiePocket {
                 <div class="type-details">
                   {typeCategories.map(type => {
                     return (
-                      <div style={{display: this.cookieDetailPane === type ? 'block' : 'none' }}>
+                      <div style={{display: this.activeCookieDetailPane === type ? 'block' : 'none' }}>
                         <p>{type}</p>
                         <div class="container">
                           <table class="content-type-table">
