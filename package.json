@@ -17,13 +17,18 @@
     "test": "jest",
     "test.watch": "jest --watch"
   },
-  "dependencies": {},
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "js-cookie": "^2.2.0"
+  },
   "devDependencies": {
     "@stencil/core": "^0.9.1",
     "@stencil/dev-server": "latest",
     "@stencil/sass": "^0.0.5",
     "@stencil/utils": "latest",
+    "@types/classnames": "^2.2.3",
     "@types/jest": "^21.1.1",
+    "@types/js-cookie": "^2.1.0",
     "jest": "^21.2.1"
   },
   "repository": {

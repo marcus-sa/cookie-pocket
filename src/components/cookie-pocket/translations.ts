@@ -7,11 +7,14 @@ export const defaultTranslations: I18n = {
     show: 'Show details',
     hide: 'Hide details',
   },
-  about: 'About cookies',
+  aboutLabel: 'About cookies',
   categories: {
     necessary: 'Necessary',
     preferences: 'Preferences',
     statistics: 'Statistics',
+    marketing: 'Marketing',
     userExperience: 'User experience',
+    unclassified: 'Unclassified',
+    advertising: 'Advertising',
   },
 };

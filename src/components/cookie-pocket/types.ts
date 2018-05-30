@@ -1,4 +1,4 @@
-export type CurrentTab = "declaration" | "about";
+export type CurrentTab = "overview" | "about";
 
 export type ExposedMethods = {
   onReady?: (cookiePocket: any) => void,
