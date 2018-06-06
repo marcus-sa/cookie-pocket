@@ -32,6 +32,7 @@ declare global {
   namespace StencilComponents {
     interface CookiePocket {
       'force': boolean;
+      'hide': () => void;
       'i18n': I18n;
       'key': string;
       'logo': string;
@@ -61,7 +62,7 @@ declare global {
       'i18n'?: I18n;
       'key'?: string;
       'logo'?: string;
-      'onCompliance'?: (event: CustomEvent) => void;
+      'onComplete'?: (event: CustomEvent) => void;
       'onReady'?: (event: CustomEvent) => void;
     }
   }

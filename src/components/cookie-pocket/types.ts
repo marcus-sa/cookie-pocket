@@ -1,5 +1,10 @@
 export type CurrentTab = "overview" | "about";
 
+export type ComplianceOptions = {
+  expires: number;
+  path: string;
+};
+
 export type CookieLevels = {
   necessary?: boolean,
   preferences?: boolean,
@@ -8,13 +13,13 @@ export type CookieLevels = {
 };
 
 export type CookiePocketCookies = {
-  consent?: boolean,//'accepted',
+  consent?: boolean,
   levels?: CookieLevels,
 };
 
 export type ExposedMethods = {
   onReady?: () => any,
-  onCompliance: (cookieLevels: CookieLevels) => any,
+  onComplete: (cookieLevels: CookieLevels) => any,
 };
 
 export type CookiePocketElement = HTMLElement & ExposedMethods;
